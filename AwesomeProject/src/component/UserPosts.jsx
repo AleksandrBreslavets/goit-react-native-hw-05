@@ -6,11 +6,15 @@ import { StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { TouchableOpacity } from "react-native";
 
-export const UserPost = ({ imgSrc, postName, numbOfComments, numbOfLikes, location }) => {
+export const UserPost = ({ imgSrc, postName, numbOfComments, numbOfLikes, location, coords }) => {
     const navigation = useNavigation();
 
     const onCommentsClick = () => {
         navigation.navigate("Comments", { imgSrc });
+    };
+
+    const onLocationClick = () => {
+        navigation.navigate("Maps", { coords });
     };
 
     return (
@@ -33,7 +37,9 @@ export const UserPost = ({ imgSrc, postName, numbOfComments, numbOfLikes, locati
                     </View>
                 </View>
                 <View style={styles.locationConatiner}>
-                    <MapPinIcon />
+                    <TouchableOpacity onPress={onLocationClick}>
+                        <MapPinIcon />
+                    </TouchableOpacity>
                     <Text style={styles.loactionValue}>{location}</Text>
                 </View>
             </View>

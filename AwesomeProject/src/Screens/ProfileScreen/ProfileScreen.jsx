@@ -32,19 +32,37 @@ export const ProfileScreen = () => {
                                 postName="Ліс"
                                 numbOfComments={8}
                                 numbOfLikes={153}
-                                location="Ukraine" />
+                                location="Ukraine"
+                                coords={
+                                    {
+                                        latitude: 48.8473400,
+                                        longitude:23.4458700
+                                    }
+                                } />
                             <UserPost
                                 imgSrc={require("../../../assets/img/post_2.jpg")}
                                 postName="Захід на Чорному морі"
                                 numbOfComments={3}
                                 numbOfLikes={200}
-                                location="Ukraine" />
+                                location="Ukraine"
+                                coords={
+                                    {
+                                        latitude: 46.4774700,
+                                        longitude: 30.7326200
+                                    }
+                                } />
                             <UserPost
                                 imgSrc={require("../../../assets/img/post_3.jpg")}
                                 postName="Старий будиночок у Венеції"
                                 numbOfComments={50}
                                 numbOfLikes={200}
-                                location="Italy" />
+                                location="Italy"
+                                coords={
+                                    {
+                                        latitude: 45.4371300,
+                                        longitude: 12.3326500
+                                    }
+                                }/>
                         </View>
                     </ScrollView>
                 </View>

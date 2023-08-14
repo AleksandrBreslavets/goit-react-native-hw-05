@@ -1,13 +1,13 @@
 import { useRoute } from "@react-navigation/native";
 import { Keyboard, Platform, View } from "react-native";
-import { Image, Text } from "react-native"
+import { Image} from "react-native"
 import { globalStyles } from "../../styles/globalStyles";
 import { StyleSheet } from "react-native";
 import { ScrollView } from "react-native";
 import { Comment } from "../../component/Comment";
 import { TouchableWithoutFeedback } from "react-native";
 import { KeyboardAvoidingView } from "react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TextInput } from "react-native";
 import { TouchableOpacity } from "react-native";
 import { ArrowUpIcon } from "../../../assets/svgIcons/icons";
@@ -15,6 +15,10 @@ import { ArrowUpIcon } from "../../../assets/svgIcons/icons";
 export const CommentsScreen = () => {
     const { params: { imgSrc } } = useRoute();
     const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
+
+    useEffect(() => {
+        console.log("Mount comments")
+    },[])
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

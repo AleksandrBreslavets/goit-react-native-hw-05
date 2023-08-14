@@ -66,7 +66,6 @@ export const Home = () => {
                     title: "Публікації",
                     headerTitleAlign: "center",
                     headerRight:()=><ButtonToLogOut />
-                    
                 }}
             />
             <Tabs.Screen

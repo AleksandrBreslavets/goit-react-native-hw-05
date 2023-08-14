@@ -1,15 +1,75 @@
-import { Keyboard, StyleSheet, TouchableOpacity, View } from "react-native"
-import { Platform } from "react-native"
-import { KeyboardAvoidingView } from "react-native"
-import { TouchableWithoutFeedback } from "react-native"
-import { Text } from "react-native"
-import { globalStyles } from "../../styles/globalStyles"
-import { useState } from "react"
-import { CameraIcon, MapPinIcon, TrashIcon } from "../../../assets/svgIcons/icons"
-import { TextInput } from "react-native-gesture-handler"
+import { Keyboard, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Platform } from "react-native";
+import { KeyboardAvoidingView } from "react-native";
+import { TouchableWithoutFeedback } from "react-native";
+import { Text } from "react-native";
+import { globalStyles } from "../../styles/globalStyles";
+import { useEffect, useState } from "react";
+import { CameraIcon, MapPinIcon, TrashIcon } from "../../../assets/svgIcons/icons";
+import { TextInput } from "react-native-gesture-handler";
+import * as Location from 'expo-location';
+import { Camera} from "expo-camera";
+import * as MediaLibrary from "expo-media-library";
+import { Image } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 export const CreatePostsScreen = () => {
+    const navigation = useNavigation();
     const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
+    const [location, setLocation] = useState(null);
+    const [hasPermission, setHasPermission] = useState(null);
+    const [cameraRef, setCameraRef] = useState(null);
+    const [photoUri, setPhotoUri] = useState('');
+    const [locationName, setLocationName] = useState('');
+    const [postName, setPostName] = useState('');
+    const isPostInfoFull = postName && locationName && photoUri;
+
+    useEffect(() => {
+        (async () => {
+            const { status } = await Camera.requestCameraPermissionsAsync();
+            await MediaLibrary.requestPermissionsAsync();
+            setHasPermission(status === "granted");
+        })();
+
+    }, []);
+
+    if (hasPermission === null) {
+        return <Text>Requesting for permisions...</Text>;
+    }
+    if (!hasPermission) {
+        return <Text>No access to camera</Text>;
+    }
+    
+    const takePhoto = async () => {
+        if (cameraRef) {
+            const { uri } = await cameraRef.takePictureAsync();
+            await MediaLibrary.createAssetAsync(uri);
+            setPhotoUri(uri);
+        }
+    };
+
+    const clearData = () => {
+        setPhotoUri(null);
+        setPostName('');
+        setLocationName('');
+    };
+    
+    const handleCreatePost = () => {
+        (async () => {
+            let status = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                console.log('Permission to access location was denied');
+            }
+            let location = await Location.getCurrentPositionAsync({});
+            const coords = {
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude
+            };
+            setLocation(coords);
+            navigation.navigate("Home", { screen: "Posts" });
+            clearData();
+        })();
+    };
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -18,41 +78,61 @@ export const CreatePostsScreen = () => {
                 {
                     paddingBottom: isKeyboardOpen ? 50 : 34,
                     display: 'flex',
-                    justifyContent:'space-between'
+                    justifyContent: 'space-between'
                 }
                 ]}>
                     <View>
-                        <View style={styles.imgContainer}>
-                            <TouchableOpacity style={styles.addPhotoBtn}>
-                                <CameraIcon fill="#bdbdbd" />
-                            </TouchableOpacity>
-                        </View>
-                        <Text style={[styles.text, { marginBottom: 32 }]}>Завантажте фото</Text>
+                        {!photoUri ?
+                            (<Camera
+                                style={styles.imgContainer}
+                                ref={setCameraRef}
+                                type={Camera.Constants.Type.back}
+                            >
+                                <TouchableOpacity style={styles.addPhotoBtn} onPress={takePhoto}>
+                                    <CameraIcon fill="#fff" />
+                                </TouchableOpacity>
+                            </Camera>) :
+                            (<View style={styles.imgContainer}>
+                                <Image style={styles.photo} source={{ uri: photoUri }} />
+                            </View>)}
+                        <Text style={[styles.text, { marginBottom: 32 }]}>{photoUri ? "Редагувати фото" : "Завантажте фото"}</Text>
                         <View>
                             <TextInput
+                                value={postName}
                                 style={styles.inputName}
                                 placeholder="Назва..."
                                 placeholderTextColor="#bdbdbd"
                                 onFocus={() => setIsKeyboardOpen(true)}
                                 onBlur={() => setIsKeyboardOpen(false)}
+                                onChangeText={setPostName}
                             />
                             <View style={{ marginTop: 16, marginBottom: 32 }}>
                                 <MapPinIcon style={{ position: 'absolute', top: 13 }} />
                                 <TextInput
+                                    value={locationName}
                                     style={styles.inputLocation}
                                     placeholder="Місцевість..."
                                     placeholderTextColor="#bdbdbd"
                                     onFocus={() => setIsKeyboardOpen(true)}
                                     onBlur={() => setIsKeyboardOpen(false)}
+                                    onChangeText={setLocationName}
                                 />
                             </View>
                         </View>
-                        <TouchableOpacity style={[globalStyles.button, globalStyles.disabledBtn]}>
-                            <Text style={[globalStyles.commonTextStyles, globalStyles.disabledBtnValue]}>Опубліковати</Text>
-                        </TouchableOpacity>
+                        {isPostInfoFull ?
+                            (
+                                <TouchableOpacity style={[globalStyles.button, globalStyles.activeBtn]} onPress={handleCreatePost}>
+                                    <Text style={[globalStyles.commonTextStyles, globalStyles.activeBtnValue]}>Опубліковати</Text>
+                                </TouchableOpacity>
+                            ) :
+                            (
+                                <View style={[globalStyles.button, globalStyles.disabledBtn]}>
+                                    <Text style={[globalStyles.commonTextStyles, globalStyles.disabledBtnValue]}>Опубліковати</Text>
+                                </View>
+                            )}
                     </View>
-                    <View style={{display:'flex', justifyContent:'center', alignItems:'center'}}>
-                        <TouchableOpacity style={styles.trashContainer}>
+                    <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <TouchableOpacity style={styles.trashContainer} onPress={clearData}>
                             <TrashIcon />
                         </TouchableOpacity>
                     </View>
@@ -60,8 +140,7 @@ export const CreatePostsScreen = () => {
             </KeyboardAvoidingView>
         </TouchableWithoutFeedback>
     );
-            
-}
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -88,7 +167,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: 60,
         height: 60,
-        backgroundColor: '#fff',
+        backgroundColor: 'rgba(255, 255, 255, 0.3)',
         borderRadius:30,
     },
     text: {
@@ -124,9 +203,14 @@ const styles = StyleSheet.create({
         display: "flex",
         justifyContent:'center',
         alignItems: "center",
-        width: 70, 
+        width: 70,
         height: 40,
         borderRadius: 20,
         backgroundColor:"#f6f6f6"
+    },
+    photo: {
+        width: '100%',
+        height: '100%',
+        borderRadius:8
     }
 });

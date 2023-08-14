@@ -1,6 +1,7 @@
 import { useNavigation } from "@react-navigation/native"
 import { TouchableOpacity } from "react-native";
 import { LogOutIcon } from "../../assets/svgIcons/icons";
+import { useEffect } from "react";
 
 export const ButtonToLogOut = () => {
     const navigation = useNavigation();

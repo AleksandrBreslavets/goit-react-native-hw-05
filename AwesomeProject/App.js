@@ -4,8 +4,9 @@ import { ImageBackground, Keyboard, SafeAreaView, StyleSheet, TouchableWithoutFe
 import { RegistartionScreen } from './src/Screens/RegistrationScreen/RegistrationScreen';
 import { CommentsScreen } from './src/Screens/CommentsScreen/CommentsScreen';
 import { useFonts } from "expo-font";
-import { LoginScreen } from './src/Screens/LoginScreen/LoginScreen'
-import {Home} from "./src/Screens/Home/Home"
+import { LoginScreen } from './src/Screens/LoginScreen/LoginScreen';
+import { Home } from "./src/Screens/Home/Home";
+import { MapScreen } from './src/Screens/MapScreen/MapScreen';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { ButtonToBack } from './src/component/ButtonToBack';
@@ -54,6 +55,26 @@ const App = () => {
           component={CommentsScreen}
           options={{
             title: "Коментарі",
+            headerStyle: {
+              borderBottomWidth:1
+            },
+            headerTitleStyle: {
+              fontFamily: "Roboto-Medium",
+              fontWeight: 500,
+              color: "#212121",
+              fontSize: 17,
+              lineHeight: 22,
+              letterSpacing:-0.408
+            },
+            headerTitleAlign: 'center',
+            headerLeft:()=><ButtonToBack />
+          }}
+        />
+        <MainStack.Screen
+          name="Maps"
+          component={MapScreen}
+          options={{
+            title: "Мапа",
             headerStyle: {
               borderBottomWidth:1
             },
