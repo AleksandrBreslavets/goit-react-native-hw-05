@@ -17,22 +17,40 @@ export const PostsScreen = () => {
                         <Text style={styles.email}>email@example.com</Text>
                     </View>
                 </View>
-                <View style={styles.postsContainer}> 
+                <View style={styles.postsContainer}>
                     <Post
                         imgSrc={require("../../../assets/img/post_1.jpg")}
                         postName="Ліс"
                         numbOfComments={0}
-                        location="Ivano-Frankivs'k Region, Ukraine" />
+                        location="Ivano-Frankivs'k Region, Ukraine"
+                        coords={
+                            {
+                                latitude: 48.8473400,
+                                longitude: 23.4458700
+                            }
+                        } />
                     <Post
                         imgSrc={require("../../../assets/img/post_2.jpg")}
                         postName="Морське узбережжя"
                         numbOfComments={0}
-                        location="Odesa, Ukraine" />
+                        location="Odesa, Ukraine"
+                        coords={
+                            {
+                                latitude: 46.4774700,
+                                longitude: 30.7326200
+                            }
+                        } />
                     <Post
                         imgSrc={require("../../../assets/img/post_3.jpg")}
                         postName="Італійський будиночок"
                         numbOfComments={0}
-                        location="Rome, Italy" />
+                        location="Rome, Italy"
+                        coords={
+                            {
+                                latitude: 45.4371300,
+                                longitude: 12.3326500
+                            }
+                        } />
                 </View>
             </View>
         </ScrollView>

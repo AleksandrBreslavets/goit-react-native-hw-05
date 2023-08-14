@@ -1,10 +1,20 @@
-import { Text } from "react-native";
+import { Text, TouchableOpacity } from "react-native";
 import { Image } from "react-native";
 import { View } from "react-native"
 import { MapPinIcon, MessageIcon } from "../../assets/svgIcons/icons";
 import { StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
-export const Post = ({ imgSrc, postName, numbOfComments, location }) => {
+export const Post = ({ imgSrc, postName, numbOfComments, location, coords }) => {
+    const navigation = useNavigation();
+
+    const onCommentsClick = () => {
+        navigation.navigate("Comments", { imgSrc });
+    };
+
+    const onLocationClick = () => {
+        navigation.navigate("Maps", { coords });
+    };
     return (
         <View>
             <View>
@@ -13,11 +23,15 @@ export const Post = ({ imgSrc, postName, numbOfComments, location }) => {
             <Text style={[styles.name, styles.commonText]}>{postName}</Text>
             <View style={styles.detailsConatiner}>
                 <View style={styles.commentsContainer}>
-                    <MessageIcon />
+                    <TouchableOpacity onPress={onCommentsClick}>
+                        <MessageIcon />
+                    </TouchableOpacity>
                     <Text style={[styles.commentsValue, styles.commonText]}>{numbOfComments}</Text>
                 </View>
                 <View style={styles.locationConatiner}>
-                    <MapPinIcon />
+                    <TouchableOpacity onPress={onLocationClick}>
+                        <MapPinIcon />  
+                    </TouchableOpacity>
                     <Text style={styles.loactionValue}>{location}</Text>
                 </View>
             </View>
